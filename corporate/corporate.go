@@ -24,11 +24,9 @@ func ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(p)
 
-	body, err := r.GetBody()
+	body, _ := io.ReadAll(r.Body)
 
-	if err != nil {
-		fmt.Print(body)
-	}
+	fmt.Println(body)
 
 	handleBadRequest(w, r)
 }
