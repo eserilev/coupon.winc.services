@@ -4,24 +4,17 @@
 
 package corporate
 
-import (
-	"encoding/csv"
-	"log"
-	"os"
-)
+const columns int = 18
 
-func readCsvFile(file os.FileInfo, path string) [][]string {
-	f, err := os.Open(path + file.Name())
-	if err != nil {
-		log.Fatal("Unable to read input file "+path+file.Name(), err)
+func readCsvFile(content []byte) []string {
+	c := string(content[:])
+	contentLength := len(c)
+	rows := contentLength / columns
+	stringContent := make([]string, rows)
+	for i := 0; i < rows; i++ {
+		start := columns * i
+		end := columns * (i + 1)
+		stringContent[i] = c[start:end]
 	}
-	defer f.Close()
-
-	csvReader := csv.NewReader(f)
-	records, err := csvReader.ReadAll()
-	if err != nil {
-		log.Fatal("Unable to parse file as CSV for "+path+file.Name(), err)
-	}
-
-	return records
+	return stringContent
 }
