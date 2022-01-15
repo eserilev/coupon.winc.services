@@ -16,11 +16,13 @@ func ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// TODO: normalize path. ends in a slash, strip the slash.
 	//
 	p := r.URL.Path
-	fmt.Println(p)
+
 	if !strings.HasPrefix(p, "/__s/v1/orders/corporate/") {
 		handleBadRequest(w, r)
 		return
 	}
+	fmt.Println(r)
+	fmt.Print(r.Body)
 
 	handleBadRequest(w, r)
 }
