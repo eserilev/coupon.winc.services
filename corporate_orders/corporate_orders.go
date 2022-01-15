@@ -5,6 +5,7 @@
 package corporate_orders
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -15,11 +16,8 @@ func ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// TODO: normalize path. ends in a slash, strip the slash.
 	//
 	p := r.URL.Path
+	fmt.Println(p)
 	if !strings.HasPrefix(p, "/__s/v1/orders/corporate/") {
-		handleBadRequest(w, r)
-		return
-	}
-	if !strings.HasSuffix(p, "/index.json") {
 		handleBadRequest(w, r)
 		return
 	}
