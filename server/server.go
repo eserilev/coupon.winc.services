@@ -9,6 +9,8 @@ import (
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/eserilev/migration.winc.services/corporate_orders"
 )
 
 type Handler interface {
@@ -32,7 +34,7 @@ func (s *HTTPServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	default:
 		if strings.HasPrefix(p, "/__s/v1/orders/corporate") {
 			fmt.Print("test")
-			cor.ServeHTTP(w, r)
+			corporate_orders.ServeHTTP(w, r)
 		} else {
 			s.defaultHandler(w, r)
 		}
