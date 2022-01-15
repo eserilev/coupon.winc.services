@@ -4,17 +4,27 @@
 
 package corporate
 
-const columns int = 18
+import (
+	"encoding/csv"
+	"io"
+	"net/http"
+)
 
-func readCsvFile(content []byte) []string {
-	c := string(content[:])
-	contentLength := len(c)
-	rows := contentLength / columns
-	stringContent := make([]string, rows)
-	for i := 0; i < rows; i++ {
-		start := columns * i
-		end := columns * (i + 1)
-		stringContent[i] = c[start:end]
+func readCsvFile(r *http.Request) [][]string {
+	reader := csv.NewReader(r.Body)
+	var results [][]string
+	for {
+		// read one row from csv
+		record, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil
+		}
+
+		// add record to result set
+		results = append(results, record)
 	}
-	return stringContent
+	return results
 }
