@@ -31,7 +31,8 @@ func (s *HTTPServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		s.statusHandler(w, r)
 	default:
 		if strings.HasPrefix(p, "/__s/v1/orders/corporate") {
-			// merchandise.ServeHTTP(w, r)
+			fmt.Print("test")
+			cor.ServeHTTP(w, r)
 		} else {
 			s.defaultHandler(w, r)
 		}
