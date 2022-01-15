@@ -25,7 +25,7 @@ func ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(p)
 
 	body, _ := io.ReadAll(r.Body)
-	test := zreadCsvFile(body)
+	test := readCsvFile(body)
 	fmt.Println(test)
 
 	handleBadRequest(w, r)
