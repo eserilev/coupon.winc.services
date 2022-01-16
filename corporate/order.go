@@ -90,8 +90,7 @@ func PostCorporateOrders(corporateOrders CorporateOrders, userGuid string) (stri
 
 	if response.StatusCode == http.StatusOK {
 		bodyBytes, _ := io.ReadAll(response.Body)
-		bodyString := string(bodyBytes)
-		responseContent = bodyString
+		responseContent = string(bodyBytes)
 		success = true
 	} else {
 		responseContent = response.Status
