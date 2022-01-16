@@ -107,7 +107,7 @@ func Post(dest string, data []byte) (*http.Response, error) {
 		return nil, err
 	}
 	req.Header.Add("Content-Type", "application/json; charset=UTF-8")
-	req.Header.Add("Authorization", "Basic "+basicAuth(config.CwApiUserName(), config.CwApiPassword()))
+	req.Header.Add("Authorization", "Basic "+BasicAuth(config.CwApiUserName(), config.CwApiPassword()))
 	res, err := DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
@@ -115,7 +115,7 @@ func Post(dest string, data []byte) (*http.Response, error) {
 	return res, nil
 }
 
-func basicAuth(username, password string) string {
+func BasicAuth(username, password string) string {
 	auth := username + ":" + password
 	return base64.StdEncoding.EncodeToString([]byte(auth))
 }
