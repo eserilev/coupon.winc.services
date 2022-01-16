@@ -5,7 +5,7 @@ func CwApiBaseUrl() string {
 }
 
 func CorporateOrderRelativePath(userGuid string) string {
-	return "winc/users/" + userGuid + "gift-checkout"
+	return "winc/users/" + userGuid + "/gift-checkout"
 }
 
 func CwApiUserName() string {
