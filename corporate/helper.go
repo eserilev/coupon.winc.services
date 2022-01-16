@@ -14,6 +14,8 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/eserilev/migration.winc.services/config"
 )
 
 //
@@ -74,43 +76,10 @@ func GetBillingProfile(r *http.Request) BillingProfile {
 	return *billingProfile
 }
 
-func CreateCorporateRecords(records [][]string) []CorporateOrder {
-	corporateRecords := make([]CorporateOrder, len(records)-1)
-	for i, record := range records[1:] {
-		corporateRecords[i] = CreateCorporateRecordObject(record)
-	}
-	return corporateRecords
-}
-
-func CreateCorporateRecordObject(record []string) CorporateOrder {
-	corporateRecord := new(CorporateOrder)
-	corporateRecord.OrderId = 0
-	giftAmount, _ := strconv.Atoi(record[1])
-	corporateRecord.GiftAmount = giftAmount
-	corporateRecord.ShippingMethod = 4
-	corporateRecord.Email = record[3]
-	corporateRecord.UserName = record[4]
-	corporateRecord.FirstName = record[5]
-	corporateRecord.LastName = record[6]
-	corporateRecord.Company = record[7]
-	corporateRecord.Street1 = record[8]
-	corporateRecord.Street2 = record[9]
-	corporateRecord.City = record[10]
-	corporateRecord.State = record[11]
-	corporateRecord.PostalCode = record[12]
-	corporateRecord.Phone = record[13]
-	corporateRecord.GiftMessage = record[14]
-	corporateRecord.Bundle = record[15]
-	corporateRecord.Tag = record[16]
-	corporateRecord.Coupon = record[17]
-	corporateRecord.Credits = record[18]
-	return *corporateRecord
-}
-
 func PostCorporateOrders(corporateOrders CorporateOrders, userGuid string) (string, bool) {
 	success := false
 	responseContent := ""
-	dest := "http://cwapi-staging.cloudapp.net/winc/users/" + userGuid + "/gift-checkout"
+	dest := config.CwApiBaseUrl() + config.CorporateOrderRelativePath(userGuid)
 	data, _ := json.Marshal(corporateOrders)
 	response, err := Post(dest, data)
 	if err != nil {
@@ -137,7 +106,7 @@ func Post(dest string, data []byte) (*http.Response, error) {
 		return nil, err
 	}
 	req.Header.Add("Content-Type", "application/json; charset=UTF-8")
-	req.Header.Add("Authorization", "Basic "+basicAuth("api@clubw.com", "randomPassword"))
+	req.Header.Add("Authorization", "Basic "+basicAuth(config.CwApiUserName(), config.CwApiPassword()))
 	res, err := DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
