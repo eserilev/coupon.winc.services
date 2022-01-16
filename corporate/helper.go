@@ -26,7 +26,7 @@ var DefaultClient *http.Client = &http.Client{
 	Timeout:       30 * time.Second,
 }
 
-func ProcessCorporateOrders(r *http.Request) {
+func ProcessCorporateOrders(r *http.Request) bool {
 	content := ReadCsvFile(r)
 	userGuid := GetUserGuid(r)
 	billingProfile := GetBillingProfile(r)
@@ -34,7 +34,7 @@ func ProcessCorporateOrders(r *http.Request) {
 	corporateOrders.Gifts = CreateCorporateRecords(content)
 	corporateOrders.BillingProfile = billingProfile
 	corporateOrders.BrandId = GetBrandId(r)
-	PostCorporateOrders(*corporateOrders, userGuid)
+	return PostCorporateOrders(*corporateOrders, userGuid)
 }
 
 func ReadCsvFile(r *http.Request) [][]string {
@@ -69,10 +69,13 @@ func GetBillingProfile(r *http.Request) BillingProfile {
 }
 
 func CreateCorporateRecords(records [][]string) []CorporateOrder {
-	corporateRecords := make([]CorporateOrder, len(records))
+	corporateRecords := make([]CorporateOrder, len(records)-1)
 	for i, record := range records[1:] {
+		fmt.Println(record)
+		fmt.Println(i)
 		corporateRecords[i] = CreateCorporateRecordObject(record)
 	}
+	fmt.Println(corporateRecords)
 	return corporateRecords
 }
 
@@ -101,28 +104,27 @@ func CreateCorporateRecordObject(record []string) CorporateOrder {
 	return *corporateRecord
 }
 
-func PostCorporateOrders(corporateOrders CorporateOrders, userGuid string) {
+func PostCorporateOrders(corporateOrders CorporateOrders, userGuid string) bool {
+	success := false
 	dest := "http://cwapi-staging.cloudapp.net/winc/users/" + userGuid + "/gift-checkout"
-	fmt.Println(corporateOrders.Gifts[0].ShippingMethod)
-	data, err := json.Marshal(corporateOrders)
-
-	if err != nil {
-
-	}
-
+	data, _ := json.Marshal(corporateOrders)
 	response, err := Post(dest, data)
 	if err != nil {
 		fmt.Println(err)
+		return success
 	}
 
 	if response.StatusCode == http.StatusOK {
 		bodyBytes, _ := io.ReadAll(response.Body)
 		bodyString := string(bodyBytes)
 		fmt.Println(bodyString)
+		success = true
 	} else {
 		fmt.Println(response.StatusCode)
 		fmt.Println("FAILURE")
 	}
+
+	return success
 }
 
 func Post(dest string, data []byte) (*http.Response, error) {

@@ -21,9 +21,11 @@ func ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ProcessCorporateOrders(r)
-
-	handleBadRequest(w, r)
+	if ProcessCorporateOrders(r) {
+		handleGoodRequest(w, r)
+	} else {
+		handleBadRequest(w, r)
+	}
 }
 
 func AddDefaultResponseHeaders(w http.ResponseWriter) {
@@ -41,4 +43,9 @@ func AddDefaultResponseHeaders(w http.ResponseWriter) {
 func handleBadRequest(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(400)
 	io.WriteString(w, "Bad Request")
+}
+
+func handleGoodRequest(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(200)
+	io.WriteString(w, "Success")
 }
