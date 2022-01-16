@@ -5,7 +5,6 @@
 package corporate
 
 import (
-	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -22,10 +21,7 @@ func ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(p)
-
-	test := readCsvFile(r)
-	fmt.Println(test)
+	ProcessCorporateOrders(r)
 
 	handleBadRequest(w, r)
 }
