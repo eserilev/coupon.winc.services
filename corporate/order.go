@@ -31,11 +31,12 @@ var DefaultClient *http.Client = &http.Client{
 func ProcessCorporateOrders(r *http.Request) ([]byte, bool) {
 	content := ReadCsvFile(r)
 	userGuid := GetUserGuid(r)
+	brandId := GetBrandId(r)
 	billingProfile := GetBillingProfile(r)
 	corporateOrders := new(CorporateOrders)
 	corporateOrders.Gifts = CreateCorporateRecords(content)
 	corporateOrders.BillingProfile = billingProfile
-	corporateOrders.BrandId = GetBrandId(r)
+	corporateOrders.BrandId = brandId
 	resultString, success := PostCorporateOrders(*corporateOrders, userGuid)
 	if !success {
 		return nil, success
