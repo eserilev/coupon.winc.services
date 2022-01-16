@@ -37,34 +37,34 @@ type CorporateOrders struct {
 }
 
 func CreateCorporateOrders(records [][]string) []CorporateOrder {
-	corporateRecords := make([]CorporateOrder, len(records)-1)
+	corporateOrders := make([]CorporateOrder, len(records)-1)
 	for i, record := range records[1:] {
-		corporateRecords[i] = CreateCorporateOrder(record)
+		corporateOrders[i] = CreateCorporateOrder(record)
 	}
-	return corporateRecords
+	return corporateOrders
 }
 
 func CreateCorporateOrder(record []string) CorporateOrder {
-	corporateRecord := new(CorporateOrder)
-	corporateRecord.OrderId = 0
+	corporateOrders := new(CorporateOrder)
+	corporateOrders.OrderId = 0
 	giftAmount, _ := strconv.Atoi(record[1])
-	corporateRecord.GiftAmount = giftAmount
-	corporateRecord.ShippingMethod = 4
-	corporateRecord.Email = record[3]
-	corporateRecord.UserName = record[4]
-	corporateRecord.FirstName = record[5]
-	corporateRecord.LastName = record[6]
-	corporateRecord.Company = record[7]
-	corporateRecord.Street1 = record[8]
-	corporateRecord.Street2 = record[9]
-	corporateRecord.City = record[10]
-	corporateRecord.State = record[11]
-	corporateRecord.PostalCode = record[12]
-	corporateRecord.Phone = record[13]
-	corporateRecord.GiftMessage = record[14]
-	corporateRecord.Bundle = record[15]
-	corporateRecord.Tag = record[16]
-	corporateRecord.Coupon = record[17]
-	corporateRecord.Credits = record[18]
-	return *corporateRecord
+	corporateOrders.GiftAmount = giftAmount
+	corporateOrders.ShippingMethod = 4
+	corporateOrders.Email = record[3]
+	corporateOrders.UserName = record[4]
+	corporateOrders.FirstName = record[5]
+	corporateOrders.LastName = record[6]
+	corporateOrders.Company = record[7]
+	corporateOrders.Street1 = record[8]
+	corporateOrders.Street2 = record[9]
+	corporateOrders.City = record[10]
+	corporateOrders.State = record[11]
+	corporateOrders.PostalCode = record[12]
+	corporateOrders.Phone = record[13]
+	corporateOrders.GiftMessage = record[14]
+	corporateOrders.Bundle = record[15]
+	corporateOrders.Tag = record[16]
+	corporateOrders.Coupon = record[17]
+	corporateOrders.Credits = record[18]
+	return *corporateOrders
 }
