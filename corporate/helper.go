@@ -26,7 +26,7 @@ var DefaultClient *http.Client = &http.Client{
 	Timeout:       30 * time.Second,
 }
 
-func ProcessCorporateOrders(r *http.Request) bool {
+func ProcessCorporateOrders(r *http.Request) ([]byte, bool) {
 	content := ReadCsvFile(r)
 	userGuid := GetUserGuid(r)
 	billingProfile := GetBillingProfile(r)
@@ -34,7 +34,13 @@ func ProcessCorporateOrders(r *http.Request) bool {
 	corporateOrders.Gifts = CreateCorporateRecords(content)
 	corporateOrders.BillingProfile = billingProfile
 	corporateOrders.BrandId = GetBrandId(r)
-	return PostCorporateOrders(*corporateOrders, userGuid)
+	resultString, success := PostCorporateOrders(*corporateOrders, userGuid)
+	if !success {
+		return nil, success
+	}
+
+	resultBytes, _ := json.Marshal(resultString)
+	return resultBytes, success
 }
 
 func ReadCsvFile(r *http.Request) [][]string {
@@ -71,11 +77,8 @@ func GetBillingProfile(r *http.Request) BillingProfile {
 func CreateCorporateRecords(records [][]string) []CorporateOrder {
 	corporateRecords := make([]CorporateOrder, len(records)-1)
 	for i, record := range records[1:] {
-		fmt.Println(record)
-		fmt.Println(i)
 		corporateRecords[i] = CreateCorporateRecordObject(record)
 	}
-	fmt.Println(corporateRecords)
 	return corporateRecords
 }
 
@@ -104,27 +107,27 @@ func CreateCorporateRecordObject(record []string) CorporateOrder {
 	return *corporateRecord
 }
 
-func PostCorporateOrders(corporateOrders CorporateOrders, userGuid string) bool {
+func PostCorporateOrders(corporateOrders CorporateOrders, userGuid string) (string, bool) {
 	success := false
+	responseContent := ""
 	dest := "http://cwapi-staging.cloudapp.net/winc/users/" + userGuid + "/gift-checkout"
 	data, _ := json.Marshal(corporateOrders)
 	response, err := Post(dest, data)
 	if err != nil {
 		fmt.Println(err)
-		return success
+		return err.Error(), success
 	}
 
 	if response.StatusCode == http.StatusOK {
 		bodyBytes, _ := io.ReadAll(response.Body)
 		bodyString := string(bodyBytes)
-		fmt.Println(bodyString)
+		responseContent = bodyString
 		success = true
 	} else {
-		fmt.Println(response.StatusCode)
-		fmt.Println("FAILURE")
+		responseContent = response.Status
 	}
 
-	return success
+	return responseContent, success
 }
 
 func Post(dest string, data []byte) (*http.Response, error) {
