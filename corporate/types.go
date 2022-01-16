@@ -36,15 +36,15 @@ type CorporateOrders struct {
 	BrandId        int              `json:"brandId"`
 }
 
-func CreateCorporateRecords(records [][]string) []CorporateOrder {
+func CreateCorporateOrders(records [][]string) []CorporateOrder {
 	corporateRecords := make([]CorporateOrder, len(records)-1)
 	for i, record := range records[1:] {
-		corporateRecords[i] = CreateCorporateRecordObject(record)
+		corporateRecords[i] = CreateCorporateOrder(record)
 	}
 	return corporateRecords
 }
 
-func CreateCorporateRecordObject(record []string) CorporateOrder {
+func CreateCorporateOrder(record []string) CorporateOrder {
 	corporateRecord := new(CorporateOrder)
 	corporateRecord.OrderId = 0
 	giftAmount, _ := strconv.Atoi(record[1])

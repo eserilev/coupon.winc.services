@@ -34,7 +34,7 @@ func ProcessCorporateOrders(r *http.Request) ([]byte, bool) {
 	brandId := GetBrandId(r)
 	billingProfile := GetBillingProfile(r)
 	corporateOrders := new(CorporateOrders)
-	corporateOrders.Gifts = CreateCorporateRecords(content)
+	corporateOrders.Gifts = CreateCorporateOrders(content)
 	corporateOrders.BillingProfile = billingProfile
 	corporateOrders.BrandId = brandId
 	resultString, success := PostCorporateOrders(*corporateOrders, userGuid)
