@@ -21,7 +21,6 @@ func main() {
 		x = <-s
 		d <- true
 	}()
-	fmt.Println(x.String())
 	h := &http.Server{
 		Addr:    ":4000",
 		Handler: &server.HTTPServer{},

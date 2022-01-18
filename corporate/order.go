@@ -79,6 +79,7 @@ func GetBillingProfile(r *http.Request) BillingProfile {
 
 func PostCorporateOrders(corporateOrders CorporateOrders, userGuid string) (string, bool) {
 	success := false
+	corporateOrderResponse := new(CorporateOrderResponse)
 	responseContent := ""
 	dest := config.CwApiBaseUrl() + config.CorporateOrderRelativePath(userGuid)
 	data, _ := json.Marshal(corporateOrders)
@@ -91,7 +92,8 @@ func PostCorporateOrders(corporateOrders CorporateOrders, userGuid string) (stri
 	if response.StatusCode == http.StatusOK {
 		bodyBytes, _ := io.ReadAll(response.Body)
 		responseContent = string(bodyBytes)
-		success = true
+		json.Unmarshal([]byte(responseContent), &corporateOrderResponse)
+		success = corporateOrderResponse.Success
 	} else {
 		responseContent = response.Status
 	}
