@@ -36,6 +36,11 @@ type CorporateOrders struct {
 	BrandId        int              `json:"brandId"`
 }
 
+type CorporateOrderResponse struct {
+	Success bool             `json:"success"`
+	Gifts   []CorporateOrder `json:"gifts"`
+}
+
 func CreateCorporateOrders(records [][]string) []CorporateOrder {
 	corporateOrders := make([]CorporateOrder, len(records)-1)
 	for i, record := range records[1:] {
