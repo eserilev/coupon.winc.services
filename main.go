@@ -13,6 +13,7 @@ import (
 
 func main() {
 	var x os.Signal
+	_ = x
 	s := make(chan os.Signal, 1)
 	d := make(chan bool, 1)
 	fmt.Println("migration.winc.services")
