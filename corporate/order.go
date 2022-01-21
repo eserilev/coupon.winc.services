@@ -6,7 +6,6 @@ package corporate
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
@@ -84,6 +83,7 @@ func PostCorporateOrders(corporateOrders CorporateOrders, userGuid string) (stri
 	dest := config.CwApiBaseUrl() + config.CorporateOrderRelativePath(userGuid)
 	data, _ := json.Marshal(corporateOrders)
 	response, err := Post(dest, data)
+
 	if err != nil {
 		fmt.Println(err)
 		return err.Error(), success
@@ -108,15 +108,10 @@ func Post(dest string, data []byte) (*http.Response, error) {
 		return nil, err
 	}
 	req.Header.Add("Content-Type", "application/json; charset=UTF-8")
-	req.Header.Add("Authorization", "Basic "+BasicAuth(config.CwApiUserName(), config.CwApiPassword()))
+	req.Header.Add("X-Api-Key", "todo")
 	res, err := DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	return res, nil
-}
-
-func BasicAuth(username, password string) string {
-	auth := username + ":" + password
-	return base64.StdEncoding.EncodeToString([]byte(auth))
 }

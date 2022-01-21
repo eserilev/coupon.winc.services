@@ -1,17 +1,9 @@
 package config
 
 func CwApiBaseUrl() string {
-	return "http://cwapi-staging.cloudapp.net/"
+	return "http://localhost:3000"
 }
 
 func CorporateOrderRelativePath(userGuid string) string {
-	return "winc/users/" + userGuid + "/gift-checkout"
-}
-
-func CwApiUserName() string {
-	return "api@clubw.com"
-}
-
-func CwApiPassword() string {
-	return "randomPassword"
+	return "/__s/v2/tmp/todo/orders/corporate?userGuid=" + userGuid
 }
