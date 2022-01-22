@@ -6,14 +6,13 @@ package corporate
 
 import (
 	"bytes"
-	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
-	"os"
 	"time"
+
+	"github.com/eserilev/utilities.winc.services/winc_csv"
 )
 
 //
@@ -28,7 +27,7 @@ var DefaultClient *http.Client = &http.Client{
 
 func ProcessOrders(filePath string, userGuid string, invoice bool, billingProfileId int, brandId int) *CorporateOrderResponse {
 	corporateOrderResponse := new(CorporateOrderResponse)
-	content := ReadCsv(filePath)
+	content := winc_csv.ReadCsv(filePath)
 	corporateOrders := new(CorporateOrders)
 	corporateOrders.Gifts = CreateCorporateOrders(content)
 	corporateOrders.BillingProfile = CreateBillingProfile(billingProfileId, invoice)
@@ -43,30 +42,6 @@ func ProcessOrders(filePath string, userGuid string, invoice bool, billingProfil
 	json.Unmarshal(resultBytes, &corporateOrderResponse)
 
 	return corporateOrderResponse
-}
-
-func ReadCsv(filePath string) [][]string {
-	f, err := os.Open(filePath)
-	if err != nil {
-		log.Fatal("Unable to read input file "+filePath, err)
-	}
-	defer f.Close()
-
-	csvReader := csv.NewReader(f)
-	records, err := csvReader.ReadAll()
-	if err != nil {
-		log.Fatal("Unable to parse file as CSV for "+filePath, err)
-	}
-	return records
-}
-
-func ReadCsvFile(r *http.Request) [][]string {
-	reader := csv.NewReader(r.Body)
-	records, err := reader.ReadAll()
-	if err != nil {
-		return nil
-	}
-	return records
 }
 
 func PostCorporateOrders(corporateOrders CorporateOrders, userGuid string) (string, bool) {
