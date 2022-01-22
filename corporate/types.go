@@ -52,7 +52,6 @@ func CreateCorporateOrders(records [][]string) []CorporateOrder {
 
 func CreateCorporateOrder(record []string) CorporateOrder {
 	corporateOrders := new(CorporateOrder)
-	corporateOrders.OrderId = 0
 	giftAmount, _ := strconv.Atoi(record[1])
 	corporateOrders.GiftAmount = giftAmount
 	corporateOrders.ShippingMethod = 4
