@@ -1,36 +1,24 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"log"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
 
-	"github.com/eserilev/migration.winc.services/server"
+	"github.com/eserilev/migration.winc.services/corporate"
 )
 
 func main() {
-	var x os.Signal
-	_ = x
-	s := make(chan os.Signal, 1)
-	d := make(chan bool, 1)
-	fmt.Println("migration.winc.services")
-	signal.Notify(s, syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL)
-	go func() {
-		x = <-s
-		d <- true
-	}()
-	h := &http.Server{
-		Addr:    ":4000",
-		Handler: &server.HTTPServer{},
+	filePath := flag.String("file", "", "a file path")
+	userGuid := flag.String("guid", "", "a user guid")
+	billingProfileId := flag.Int("billing", 0, "a billing profile id")
+	brand := flag.Int("brand", 0, "a brand id")
+	invoice := flag.Bool("invoice", false, "invoice flag")
+
+	result := corporate.ProcessOrders(*filePath, *userGuid, *invoice, *billingProfileId, *brand)
+	if !result.Success {
+		fmt.Println("Failed to process order")
+		return
 	}
-	server.Start()
-	go func() {
-		if err := h.ListenAndServe(); err != http.ErrServerClosed {
-			log.Fatalf("ListenAndServe(): %v", err)
-		}
-	}()
-	<-d
+
+	fmt.Println(result)
 }

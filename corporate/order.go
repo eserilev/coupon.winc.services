@@ -10,11 +10,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
-	"strconv"
+	"os"
 	"time"
-
-	"github.com/eserilev/migration.winc.services/config"
 )
 
 //
@@ -27,22 +26,38 @@ var DefaultClient *http.Client = &http.Client{
 	Timeout:       30 * time.Second,
 }
 
-func ProcessCorporateOrders(r *http.Request) ([]byte, bool) {
-	content := ReadCsvFile(r)
-	userGuid := GetUserGuid(r)
-	brandId := GetBrandId(r)
-	billingProfile := GetBillingProfile(r)
+func ProcessOrders(filePath string, userGuid string, invoice bool, billingProfileId int, brandId int) *CorporateOrderResponse {
+	corporateOrderResponse := new(CorporateOrderResponse)
+	content := ReadCsv(filePath)
 	corporateOrders := new(CorporateOrders)
 	corporateOrders.Gifts = CreateCorporateOrders(content)
-	corporateOrders.BillingProfile = billingProfile
+	corporateOrders.BillingProfile = CreateBillingProfile(billingProfileId, invoice)
 	corporateOrders.BrandId = brandId
 	resultString, success := PostCorporateOrders(*corporateOrders, userGuid)
 	if !success {
-		return nil, success
+		return nil
 	}
 
 	resultBytes, _ := json.Marshal(resultString)
-	return resultBytes, success
+
+	json.Unmarshal(resultBytes, &corporateOrderResponse)
+
+	return corporateOrderResponse
+}
+
+func ReadCsv(filePath string) [][]string {
+	f, err := os.Open(filePath)
+	if err != nil {
+		log.Fatal("Unable to read input file "+filePath, err)
+	}
+	defer f.Close()
+
+	csvReader := csv.NewReader(f)
+	records, err := csvReader.ReadAll()
+	if err != nil {
+		log.Fatal("Unable to parse file as CSV for "+filePath, err)
+	}
+	return records
 }
 
 func ReadCsvFile(r *http.Request) [][]string {
@@ -54,25 +69,10 @@ func ReadCsvFile(r *http.Request) [][]string {
 	return records
 }
 
-func GetUserGuid(r *http.Request) string {
-	return r.URL.Query().Get("userGuid")
-}
-
-func GetBrandId(r *http.Request) int {
-	brandId, _ := strconv.Atoi(r.URL.Query().Get("brandId"))
-	return brandId
-}
-
-func GetBillingProfile(r *http.Request) BillingProfile {
+func CreateBillingProfile(billingProfileId int, invoice bool) BillingProfile {
 	billingProfile := new(BillingProfile)
-	queryParams := r.URL.Query()
-	invoice, _ := strconv.ParseBool(queryParams.Get("invoice"))
-	billingProfileId, _ := strconv.Atoi(queryParams.Get("billingProfileId"))
-	paymentType := queryParams.Get("paymentType")
 	billingProfile.Invoice = invoice
-	billingProfile.PaymentType = paymentType
 	billingProfile.BillingProfileId = billingProfileId
-
 	return *billingProfile
 }
 
