@@ -14,7 +14,7 @@ func main() {
 	brand := flag.Int("brand", 0, "a brand id")
 	invoice := flag.Bool("invoice", false, "invoice flag")
 
-	result := corporate.ProcessOrders(*filePath, *userGuid, *invoice, *billingProfileId, *brand)
+	result := corporate.ProcessCorporateOrders(*filePath, *userGuid, *invoice, *billingProfileId, *brand)
 	if !result.Success {
 		fmt.Println("Failed to process order")
 		return

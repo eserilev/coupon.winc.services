@@ -13,7 +13,7 @@ const billingProfileId = 0
 const brandId = 10
 
 func TestCorporateOrder(t *testing.T) {
-	result := corporate.ProcessOrders(path, userGuid, invoice, billingProfileId, brandId)
+	result := corporate.ProcessCorporateOrders(path, userGuid, invoice, billingProfileId, brandId)
 	if !result.Success {
 		t.Fatalf("Failed to post corporate order")
 	}

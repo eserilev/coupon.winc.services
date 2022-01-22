@@ -25,7 +25,7 @@ var DefaultClient *http.Client = &http.Client{
 	Timeout:       30 * time.Second,
 }
 
-func ProcessOrders(filePath string, userGuid string, invoice bool, billingProfileId int, brandId int) *CorporateOrderResponse {
+func ProcessCorporateOrders(filePath string, userGuid string, invoice bool, billingProfileId int, brandId int) *CorporateOrderResponse {
 	corporateOrderResponse := new(CorporateOrderResponse)
 	content := winc_csv.ReadCsv(filePath)
 	corporateOrders := new(CorporateOrders)
