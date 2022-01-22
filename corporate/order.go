@@ -26,26 +26,16 @@ var DefaultClient *http.Client = &http.Client{
 }
 
 func ProcessCorporateOrders(filePath string, userGuid string, invoice bool, billingProfileId int, brandId int) *CorporateOrderResponse {
-	corporateOrderResponse := new(CorporateOrderResponse)
 	content := winc_csv.ReadCsv(filePath)
 	corporateOrders := new(CorporateOrders)
 	corporateOrders.Gifts = CreateCorporateOrders(content)
 	corporateOrders.BillingProfile = CreateBillingProfile(billingProfileId, invoice)
 	corporateOrders.BrandId = brandId
-	resultString, success := PostCorporateOrders(*corporateOrders, userGuid)
-	if !success {
-		return nil
-	}
-
-	resultBytes, _ := json.Marshal(resultString)
-
-	json.Unmarshal(resultBytes, &corporateOrderResponse)
-
-	return corporateOrderResponse
+	result := PostCorporateOrders(*corporateOrders, userGuid)
+	return result
 }
 
-func PostCorporateOrders(corporateOrders CorporateOrders, userGuid string) (string, bool) {
-	success := false
+func PostCorporateOrders(corporateOrders CorporateOrders, userGuid string) *CorporateOrderResponse {
 	corporateOrderResponse := new(CorporateOrderResponse)
 	responseContent := ""
 	dest := CwApiBaseUrl() + CorporateOrderRelativePath(userGuid)
@@ -54,19 +44,16 @@ func PostCorporateOrders(corporateOrders CorporateOrders, userGuid string) (stri
 
 	if err != nil {
 		fmt.Println(err)
-		return err.Error(), success
+		return corporateOrderResponse
 	}
 
 	if response.StatusCode == http.StatusOK {
 		bodyBytes, _ := io.ReadAll(response.Body)
 		responseContent = string(bodyBytes)
 		json.Unmarshal([]byte(responseContent), &corporateOrderResponse)
-		success = corporateOrderResponse.Success
-	} else {
-		responseContent = response.Status
 	}
 
-	return responseContent, success
+	return corporateOrderResponse
 }
 
 func Post(dest string, data []byte) (*http.Response, error) {

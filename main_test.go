@@ -15,6 +15,7 @@ const brandId = 10
 func TestCorporateOrder(t *testing.T) {
 	result := corporate.ProcessCorporateOrders(path, userGuid, invoice, billingProfileId, brandId)
 	if !result.Success {
+		t.Log(result)
 		t.Fatalf("Failed to post corporate order")
 	}
 	t.Log("Corporate Order Submitted Succesfully")

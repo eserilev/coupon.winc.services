@@ -39,6 +39,7 @@ type CorporateOrders struct {
 type CorporateOrderResponse struct {
 	Success bool             `json:"success"`
 	Gifts   []CorporateOrder `json:"gifts"`
+	Message string           `json:"message"`
 }
 
 func CreateCorporateOrders(records [][]string) []CorporateOrder {
