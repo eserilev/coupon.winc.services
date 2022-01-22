@@ -69,18 +69,11 @@ func ReadCsvFile(r *http.Request) [][]string {
 	return records
 }
 
-func CreateBillingProfile(billingProfileId int, invoice bool) BillingProfile {
-	billingProfile := new(BillingProfile)
-	billingProfile.Invoice = invoice
-	billingProfile.BillingProfileId = billingProfileId
-	return *billingProfile
-}
-
 func PostCorporateOrders(corporateOrders CorporateOrders, userGuid string) (string, bool) {
 	success := false
 	corporateOrderResponse := new(CorporateOrderResponse)
 	responseContent := ""
-	dest := config.CwApiBaseUrl() + config.CorporateOrderRelativePath(userGuid)
+	dest := CwApiBaseUrl() + CorporateOrderRelativePath(userGuid)
 	data, _ := json.Marshal(corporateOrders)
 	response, err := Post(dest, data)
 

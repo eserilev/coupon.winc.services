@@ -6,7 +6,7 @@ import (
 	"github.com/eserilev/migration.winc.services/corporate"
 )
 
-const path = "./test/"
+const path = "./test/test.csv"
 const userGuid = "964b9e0f-31b6-4391-bc12-35ec8a8a0460"
 const invoice = true
 const billingProfileId = 0

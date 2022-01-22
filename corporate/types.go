@@ -73,3 +73,10 @@ func CreateCorporateOrder(record []string) CorporateOrder {
 	corporateOrders.Credits = record[18]
 	return *corporateOrders
 }
+
+func CreateBillingProfile(billingProfileId int, invoice bool) BillingProfile {
+	billingProfile := new(BillingProfile)
+	billingProfile.Invoice = invoice
+	billingProfile.BillingProfileId = billingProfileId
+	return *billingProfile
+}
