@@ -37,7 +37,6 @@ func ProcessCorporateOrders(filePath string, userGuid string, invoice bool, bill
 
 func PostCorporateOrders(corporateOrders CorporateOrders, userGuid string) *CorporateOrderResponse {
 	corporateOrderResponse := new(CorporateOrderResponse)
-	responseContent := ""
 	dest := CwApiBaseUrl() + CorporateOrderRelativePath(userGuid)
 	data, _ := json.Marshal(corporateOrders)
 	response, err := Post(dest, data)
@@ -49,8 +48,7 @@ func PostCorporateOrders(corporateOrders CorporateOrders, userGuid string) *Corp
 
 	if response.StatusCode == http.StatusOK {
 		bodyBytes, _ := io.ReadAll(response.Body)
-		responseContent = string(bodyBytes)
-		json.Unmarshal([]byte(responseContent), &corporateOrderResponse)
+		json.Unmarshal(bodyBytes, &corporateOrderResponse)
 	}
 
 	return corporateOrderResponse
